@@ -277,8 +277,6 @@ If external embeddings are enabled:
 - `GET /health` returns `{"status":"ok"}` if the service is up
 - `GET /ready` checks DB connectivity and returns 200 only when dependencies are reachable
 
-Use `/ready` for container orchestration readiness probes.
-
 ## Testing
 
 ```bash
@@ -332,3 +330,4 @@ This usually means the query embedding being passed into the pgvector operator i
 - `VECTOR_DIM` matches the stored embedding dimension
 - Only incidents with `embedding_status=ready` are used for vector ranking
 ```
+
