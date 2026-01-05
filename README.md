@@ -256,5 +256,5 @@ Expected behavior. Incidents are tenant-scoped and filtered by `tenant_id` deriv
 ### Search fails with pgvector type errors
 
 This usually means the query embedding passed into pgvector is not a flat list of floats with the correct dimension. Validate that the embedding function returns exactly one vector (not a tuple or nested list) and that `VECTOR_DIM` matches what is stored.
-```
+
 
