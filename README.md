@@ -25,28 +25,29 @@ Most incident tools either store raw JSON blobs with weak governance, or they bo
 
 ## Architecture
 
-```mermaid
 flowchart LR
-  Client[Client\ncurl or UI] -->|X-API-Key| API[FastAPI]
+  Client["Client (curl or UI)"] -->|"X-API-Key"| API["FastAPI"]
 
-  API --> Auth[API key auth\nRBAC]
-  Auth -->|tenant_id, role| Handlers[Route handlers]
+  API --> Auth["API key auth (RBAC)"]
+  Auth -->|"tenant_id, role"| Handlers["Route handlers"]
 
-  Handlers --> Redact[Redaction]
-  Redact --> Store[(Postgres\nincident_logs)]
+  Handlers --> Redact["Redaction"]
+  Redact --> Store[("Postgres: incident_logs")]
 
-  Handlers --> Embed[Embeddings]
-  Embed -->|local deterministic| Local[Local embedder]
-  Embed -->|optional| Provider[External provider]
+  Handlers --> Embed["Embeddings"]
+  Embed -->|"local deterministic"| Local["Local embedder"]
+  Embed -->|"optional external"| Provider["External provider"]
   Local --> Store
   Provider --> Store
 
-  Handlers --> Search[pgvector query]
+  Handlers --> Search["pgvector similarity query"]
   Search --> Store
 
-  Handlers --> Audit[Audit log append\nhash chain]
-  Audit --> AuditStore[(Postgres\naudit_logs)]
+  Handlers --> Audit["Audit append (per-tenant hash chain)"]
+  Audit --> AuditStore[("Postgres: audit_logs")]
 
-  API --> Health[/health /ready]
-  Health --> DBCheck[DB check]
+  API --> Health["Health endpoints"]
+  Health --> Ready["GET /health and GET /ready"]
+  Ready --> DBCheck["DB connectivity check"]
   DBCheck --> Store
+
