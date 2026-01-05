@@ -1,6 +1,6 @@
-# Incident Intelligence
+# Incident Ledger API (Multi-Tenant, RBAC, Audit Chain, Vector Search)
 
-Incident Intelligence is a small, production-minded incident log service focused on:
+Incident Ledger API is a small, production-minded incident log service focused on:
 
 1. Safe storage of incident text with redaction
 2. Search that still works when external embedding providers are unavailable
