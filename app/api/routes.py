@@ -44,6 +44,7 @@ def create_incident_route(
     db: Session = Depends(get_db),
     actor: ActorContext = Depends(get_actor),
 ):
+    require_role(actor, {"responder", "admin"})
     obj = create_incident(db, tenant_id=actor.tenant_id, incident=payload)
     append_audit_log(
         db,
@@ -84,6 +85,31 @@ def get_incident_route(
         result_ids=None,
     )
     return obj
+
+
+@router.post("/incidents/{incident_id}/archive")
+def archive_incident_route(
+    incident_id: int,
+    db: Session = Depends(get_db),
+    actor: ActorContext = Depends(get_actor),
+):
+    from app.core.storage import archive_incident, ArchiveUnavailable
+
+    require_role(actor, {"responder", "admin"})
+    obj = get_incident_by_id(db, tenant_id=actor.tenant_id, incident_id=incident_id, include_deleted=False)
+    if not obj:
+        raise HTTPException(status_code=404, detail="Incident not found")
+    # Explicit public schema excludes message_raw and internal vectors.
+    snapshot = IncidentLogRead.model_validate(obj).model_dump(mode="json")
+    try:
+        archive = archive_incident(actor.tenant_id, incident_id, snapshot)
+    except ArchiveUnavailable:
+        raise HTTPException(status_code=503, detail="Incident archive unavailable") from None
+    append_audit_log(
+        db, actor=actor, action="INCIDENT_ARCHIVE", resource_type="incident",
+        resource_id=str(incident_id), request_meta=archive, result_ids=None,
+    )
+    return archive
 
 
 @router.get("/incidents/{incident_id}/raw", response_model=IncidentRawRead)

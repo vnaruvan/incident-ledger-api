@@ -1,5 +1,7 @@
 # Incident Ledger API (Multi-Tenant, RBAC, Audit Chain, Vector Search)
 
+Optional cloud integrations: [Vault secrets and encrypted S3 incident archives](docs/cloud-integrations.md).
+
 Incident Ledger API is a small, production-minded incident log service focused on:
 
 1. Safe storage of incident text with redaction
@@ -330,4 +332,3 @@ This usually means the query embedding being passed into the pgvector operator i
 - `VECTOR_DIM` matches the stored embedding dimension
 - Only incidents with `embedding_status=ready` are used for vector ranking
 ```
-
